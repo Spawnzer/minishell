@@ -45,7 +45,7 @@ void	ft_to_do(t_node *head, char *sym)
 		//tmp1->type = get_type(tmp1->value, sym);
 		printf("value:%s, type:%c, fdI:%d, fdO:%d\n", tmp1->value, tmp1->type, tmp1->fdI, tmp1->fdO);
 		if (tmp1->type == 'c' || tmp1->type == 'a')
-			scan_builtins(ft_split(tmp1->value, ' '));
+			execution_builtins(ft_split(tmp1->value, ' '));
 		else if (tmp1->type == 'p')
 				printf("and pipe it into\n");
 		else if (tmp1->type == 'r')
