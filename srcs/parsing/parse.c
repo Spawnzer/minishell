@@ -15,6 +15,19 @@
 
 void	scan_builtins(char **options);
 
+void ms_freeList(struct node* head)
+{
+	struct node* tmp;
+
+	while (head != NULL)
+	{
+		tmp = head;
+		free(tmp->value);
+		head = head->next;
+		free(tmp);
+	}
+}
+
 char	get_type(char *str, char *sym)
 {
 	char a = sym[0];
@@ -45,7 +58,7 @@ void	ft_to_do(t_node *head, char *sym)
 		//tmp1->type = get_type(tmp1->value, sym);
 		printf("value:%s, type:%c, fdI:%d, fdO:%d\n", tmp1->value, tmp1->type, tmp1->fdI, tmp1->fdO);
 		if (tmp1->type == 'c' || tmp1->type == 'a')
-			execution_builtins(ft_split(tmp1->value, ' '));
+			scan_builtins(ft_split(tmp1->value, ' '));
 		else if (tmp1->type == 'p')
 				printf("and pipe it into\n");
 		else if (tmp1->type == 'r')
@@ -59,8 +72,6 @@ void	ft_to_do(t_node *head, char *sym)
 	}
 }
 
-
-
 int ms_parsing(void)
 {
 	t_minishell *minishell;
@@ -68,18 +79,34 @@ int ms_parsing(void)
 	t_node *tmp;
 	char sym[4] = {'|', '<', '"', '\''}; 
 	minishell = get_minishell();
-	char **arg = ms_split(get_var(minishell->user_input, 1, -1), '|');
-	int i = 1;
-	t_node *head = new_node(arg[0], sym);
-	while(arg[i] != NULL)
+	if (minishell->user_input[0] != '\0' && ms_sanitize(minishell->user_input))
 	{
-		list = new_node(arg[i], sym);
-		add_at_end(&head, list);
-		i++;
+		char **arg = ms_split(get_var(minishell->user_input, 1, -1), '|');
+		if (ft_strlen(arg[0]) == 0)
+			return 0;
+		int i = 0;
+		while (arg[i]) {
+			printf("arg[%d] = '%s'\n", i, arg[i]);
+			i++;
+		}
+		minishell->head = new_node(arg[0], sym);
+		printf("head->value bw:%s\n", minishell->head->value);
+		i = 1;
+		while (arg[i] != NULL) {
+			list = new_node(arg[i], sym);
+			printf("head->valueiw:%s\n", minishell->head->value);
+			add_at_end(&minishell->head, list);
+			printf("new->value:'%s'\n", minishell->head->value);
+			i++;
+		}
+		//ft_free_table(arg);
+		tmp = minishell->head;
+		printf("head->value aw:%s\n", minishell->head->value);
+		printf("tmp->value:%s\n", tmp->value);
+
+		printlist(tmp);
+		ft_to_do(tmp, sym);
 	}
-	tmp = head;
-	//printlist(tmp);
-	ft_to_do(tmp, sym);
 	//printf ("%s\n", av[1]);
 	return 0;	
 }
