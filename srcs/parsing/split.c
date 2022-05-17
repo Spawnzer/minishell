@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adubeau <marvin@42quebec.com>              +#+  +:+       +#+        */
+/*   By: tshimoda <tshimoda@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 16:42:24 by adubeau           #+#    #+#             */
-/*   Updated: 2022/04/30 17:51:18 by adubeau          ###   ########.fr       */
+/*   Updated: 2022/05/17 12:08:15 by tshimoda         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ static void	ft_get_next_str(char **next_str, unsigned int *next_str_len,
 	*next_str += *next_str_len;
 	*next_str_len = 0;
 	i = 0;
-	while ((*next_str)[i] == sym || (*next_str)[i] == ' ')
+	while ((*next_str)[i] == sym)// || (*next_str)[i] == ' ')
 		(*next_str)++;
 	while ((*next_str)[i])
 	{
@@ -184,11 +184,11 @@ char	**ms_split(char const *s, char sym)
 	unsigned int	next_str_len;
 	unsigned int	nb_strs;
 	unsigned int	i = 0;
-	printf("s = '%s', strlen = %i\n", s, ft_strlen(s));
+	//printf("s = '%s', strlen = %i\n", s, ft_strlen(s));
 	if (ft_strlen(s) == 0)
 		return (char **)s;
 	nb_strs = ft_get_nb_strs(s, sym);
-	printf("nb_str = %d\n", nb_strs);
+//	printf("nb_str = %d\n", nb_strs);
 	tab = (char **)malloc(sizeof(char *) * (nb_strs + 1));
 	if (!tab || !s)
 		return (NULL);
@@ -199,12 +199,10 @@ char	**ms_split(char const *s, char sym)
 	{
 		ft_get_next_str(&next_str, &next_str_len, sym);
 		tab[i] = (char *)malloc(sizeof(char) * (next_str_len + 1));
+		printf("split nextstrlen = %d\n", next_str_len);
 		if (!tab[i])
 			return (ft_malloc_error(tab));
-		/*if (check_qm(next_str, -1, 1, 1) != 0)
-			ft_strlcpy(tab[i], "", 1);
-		else*/
-			ft_strlcpy(tab[i], next_str, next_str_len + 1);
+		ft_strlcpy(tab[i], next_str, next_str_len + 1);
 		i++;
 	}
 	tab[i] = NULL;
