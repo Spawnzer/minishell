@@ -20,7 +20,7 @@ char *ft_trim(char *str, char c)
 	int 	j;
 
 
-	//devrait ignorer guillement
+	//trim devrait compter le nb de caractere qu'il va trim pour bien allocer tmp
 	i = 0;
 	j = 0;
 	tmp = ft_calloc(ft_strlen(str), sizeof(char));
@@ -33,11 +33,10 @@ char *ft_trim(char *str, char c)
 			while (str[i] != q)
 				tmp[j++] = str[i++];
 		}
-		if (str[i] != c)
+		if (str[i] != c || (str[i - 1] && str[i - 1] != c))
 			tmp[j++] = str[i];
 		i++;
 	}
-	//printf("str = '%s', tmp = '%s'\n", str, tmp);
 	return (tmp);
 }
 
@@ -45,6 +44,22 @@ void	dual_increments(int *i, int *j)
 {
 	*i += 1;
 	*j += 1;
+}
+
+int 	ft_count(char *str, char c)
+{
+	int 	i;
+	int 	j;
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			j++;
+		i++;
+	}
+	return (j);
 }
 
 void	get_fd_o_value(t_node *cu, char *file, int *i, int k)
@@ -62,16 +77,17 @@ void	get_fd_o_value(t_node *cu, char *file, int *i, int k)
 	free(cu->value);
 	free(sub_str);
 	cu->value = join_str;
-	//printf("file: '%s', len of value: %d, value:'%s\n'", file, ft_strlen(cu->value), cu->value);
+	printf("file: '%s', len of value: %d, value:'%s\n'", file, ft_strlen(cu->value), cu->value);
 	cu->value = ft_trim(cu->value, ' ');
-	//printf("len of file: %d, file: '%s', len of value: %d, value:'%s\n'", ft_strlen(file), file, ft_strlen(cu->value), cu->value);
-	if (ft_strlen(cu->value) == 0 || ft_strlen(file) == ft_strlen(cu->value) - 1)
+	if (ft_strlen(cu->value) == 0 || ft_strlen(file) == ft_strlen(cu->value) - ft_count(cu->value, '>'))
 		cu->type = 'e';
 	*i = -1;
 }
 
 void	get_fd_o_open(t_node *cu, char *file, int *fd)
 {
+	if (*fd != STDOUT_FILENO)
+		close(*fd);
 	if (cu->type == 'c')
 		*fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	else
